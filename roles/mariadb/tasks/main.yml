@@ -1,0 +1,58 @@
+---
+- name: Gather OS Specific Variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+    - "../vars/{{ ansible_distribution }}.yml"
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../vars/defaults.yml"
+
+- name: Install MariaDB server and client on Debian and related
+  apt: pkg={{ item }} state=installed update-cache=yes
+  with_items:
+    - mariadb-server
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+  register: mariadb_install
+  notify:
+    - mariadb-restart
+  tags:
+    - packages
+
+- name: Install MariaDB server and client on RHEL derivatives
+  yum: name={{ item }} state=present update-cache=yes
+  with_items:
+    - mariadb-server
+    - mariadb
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora'
+
+  register: mariadb_install
+  notify:
+    - mariadb-restart
+  tags:
+    - packages
+
+- name: Install MariaDB server and client on FreeBSD
+  pkgng: name={{ item }} state=present
+  with_items:
+    - mariadb100-server
+    - mariadb100-client
+  when: ansible_distribution == 'FreeBSD'
+
+  register: mariadb_install
+  tags:
+    - packages
+
+- name: is MariaDB enable on FreeBSD
+  shell: 'sysrc mysql_enable | cut -d " " -f 2'
+  when: (ansible_distribution == 'FreeBSD') and mariadb_install
+
+  register: isEnabled
+
+- name: Enable MariaDB server
+  command: 'sysrc mysql_enable=YES'
+  when: (ansible_distribution == 'FreeBSD') and (isEnabled.stdout == "NO")
+
+  notify:
+    - mariadb-restart
