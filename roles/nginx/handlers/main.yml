@@ -1,0 +1,8 @@
+- name: nginx-start
+  service: name={{ nginx_service }} start=started
+
+- name: nginx-restart
+  service: name={{ nginx_service }} state=restarted
+
+- name: nginx-stop
+  service: name={{ nginx_service }} state=stopped

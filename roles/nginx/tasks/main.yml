@@ -1,0 +1,61 @@
+---
+- name: Gather OS Specific Variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+    - "../vars/{{ ansible_distribution }}.yml"
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../vars/defaults.yml"
+
+- name: Install Nginx on Debian and related
+  apt: pkg={{ item }} state=installed update-cache=yes
+  with_items:
+    - nginx
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+  register: nginx_install
+  notify:
+    - nginx-restart
+  tags:
+    - packages
+
+- name: Install Nginx on RHEL derivatives
+  yum: name={{ item }} state=present update-cache=yes
+  with_items:
+    - nginx
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora'
+
+  register: nginx_install
+  tags:
+    - packages
+
+- name: enable nginx on RHEL derivatives
+  service: name={{ nginx_service }} enabled=yes
+  when: (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora') and nginx_install
+
+  notify:
+    - nginx-restart
+
+- name: Install Nginx on FreeBSD
+  pkgng: name={{ item }} state=present
+  with_items:
+    - nginx
+  when: ansible_distribution == 'FreeBSD'
+
+  register: nginx_install
+  tags:
+    - packages
+
+- name: is nginx enable on FreeBSD
+  shell: 'sysrc nginx_enable | cut -d " " -f 2'
+  when: (ansible_distribution == 'FreeBSD') and nginx_install
+
+  register: isEnabled
+
+- name: Enable nginx
+  command: 'sysrc nginx_enable=YES'
+  when: (ansible_distribution == 'FreeBSD') and (isEnabled.stdout == "NO")
+
+  notify:
+    - nginx-restart

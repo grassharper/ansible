@@ -1,0 +1,27 @@
+---
+galaxy_info:
+  author: AB
+  description: Ansible role to install Nginx
+  license: WTFPL-2.0
+  min_ansible_version: 1.9
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+  - name: Debian
+    versions:
+    - all
+  - name: EL
+    versions:
+    - 7
+  - name: Fedora
+    versions:
+    - all
+  - name: FreeBSD
+    versions:
+    - all
+  categories:
+  - database
+  - database:sql
+  - packaging
+dependencies: []
