@@ -1,0 +1,6 @@
+---
+apache_daemon: httpd
+apache_server_root: /usr/local/etc/apache24
+apache_conf_path: /usr/local/etc/apache24
+
+apache_service: apache24
