@@ -1,0 +1,34 @@
+---
+- name: Gather OS Specific Variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+    - "../vars/{{ ansible_distribution }}.yml"
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../vars/defaults.yml"
+
+- name: Create groups
+  group: name="{{item}}"
+  with_items: groups
+  tags: ['users','groups','configuration']
+
+- name: Create users
+  user: name="{{item.username}}"
+        group="{{item.username if users_create_same_group else users_default_group}}"
+        groups='{{item.groups | join(",")}}'
+	shell='{{item.shell | default(users_default_shell)}}'
+        password='{{item.password | default("!") }}'
+        state='{{item.state | default("present")}}'
+        comment='{{item.name | default(omit)}}'
+        uid='{{item.uid | default(omit)}}'
+        createhome="{{'yes' if users_create_homedirs else 'no'}}"
+  with_items: users
+  tags: ['users','configuration']
+
+- name: SSH keys
+  authorized_key: user="{{item.0.username}}" key="{{item.1}}"
+  with_subelements:
+    - users
+    - ssh_key
+  tags: ['users','configuration']

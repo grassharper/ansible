@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  author: AB
+  description: Ansible role to create users
+  license: WTFPL-2.0
+  min_ansible_version: 1.9
+  platforms:
+  - name: GenericUNIX
+    versions:
+    - all
+    - any
+  - name: GenericLinux
+    versions:
+    - all
+    - any
+  - name: FreeBSD
+    versions:
+    - all
+  categories:
+  - system
+dependencies: []
