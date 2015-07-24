@@ -55,7 +55,7 @@
 
 - name: Enable nginx
   command: 'sysrc nginx_enable=YES'
-  when: (ansible_distribution == 'FreeBSD') and (isEnabled.stdout == "NO")
+  when: (ansible_distribution == 'FreeBSD') and (isEnabled.stdout == "NO" or isEnabled.stdout == "unknown")
 
   notify:
     - nginx-restart

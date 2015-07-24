@@ -52,7 +52,7 @@
 
 - name: Enable MariaDB server
   command: 'sysrc mysql_enable=YES'
-  when: (ansible_distribution == 'FreeBSD') and (isEnabled.stdout == "NO")
+  when: (ansible_distribution == 'FreeBSD') and (isEnabled.stdout == "NO" or isEnabled.stdout == "unknown")
 
   notify:
     - mariadb-restart

@@ -8,7 +8,7 @@
     - "../vars/{{ ansible_os_family }}.yml"
     - "../vars/defaults.yml"
 
-- name: Install MariaDB server and client on Debian and related
+- name: Install Apache server and client on Debian and related
   apt: pkg={{ item }} state=installed update-cache=yes
   with_items:
     - apache2
@@ -20,7 +20,7 @@
   tags:
     - packages
 
-- name: Install MariaDB server and client on RHEL derivatives
+- name: Install Apache server and client on RHEL derivatives
   yum: name={{ item }} state=present update-cache=yes
   with_items:
     - httpd
@@ -32,7 +32,7 @@
   tags:
     - packages
 
-- name: Install MariaDB server and client on FreeBSD
+- name: Install Apache server and client on FreeBSD
   pkgng: name={{ item }} state=present
   with_items:
     - apache24
@@ -42,15 +42,15 @@
   tags:
     - packages
 
-- name: is MariaDB enable on FreeBSD
+- name: is Apache enable on FreeBSD
   shell: 'sysrc apache24_enable | cut -d " " -f 2'
   when: (ansible_distribution == 'FreeBSD') and apache_install
 
   register: isEnabled
 
-- name: Enable MariaDB server
+- name: Enable Apache server
   command: 'sysrc apache24_enable=YES'
-  when: (ansible_distribution == 'FreeBSD') and (isEnabled.stdout == "NO")
+  when: (ansible_distribution == 'FreeBSD') and (isEnabled.stdout == "NO" or isEnabled.stdout == "unknown")
 
   notify:
     - apache-restart
