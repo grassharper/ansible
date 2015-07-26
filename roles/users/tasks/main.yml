@@ -8,27 +8,30 @@
     - "../vars/{{ ansible_os_family }}.yml"
     - "../vars/defaults.yml"
 
+- name: User definitions
+  include_vars: "../vars/users.yml"
+
 - name: Create groups
   group: name="{{item}}"
-  with_items: groups
+  with_items: usergroups
   tags: ['users','groups','configuration']
 
 - name: Create users
-  user: name="{{item.username}}"
-        group="{{item.username if users_create_same_group else users_default_group}}"
+  user: name='{{item.name}}'
+        group='{{item.name if users_create_same_group else users_default_group}}'
         groups='{{item.groups | join(",")}}'
-	shell='{{item.shell | default(users_default_shell)}}'
-        password='{{item.password | default("!") }}'
+        shell='{{item.shell | default(users_default_shell)}}'
+        password='{{item.password | default(omit)}}'
         state='{{item.state | default("present")}}'
-        comment='{{item.name | default(omit)}}'
+        comment='{{item.description | default(omit)}}'
         uid='{{item.uid | default(omit)}}'
-        createhome="{{'yes' if users_create_homedirs else 'no'}}"
+        createhome='{{'yes' if users_create_homedirs else 'no'}}'
   with_items: users
   tags: ['users','configuration']
 
 - name: SSH keys
-  authorized_key: user="{{item.0.username}}" key="{{item.1}}"
+  authorized_key: "user={{ item.0.name }} key='{{ lookup('file', role_path + '/files/ssh_keys/' + item.1.name) }}' state={{ item.1.state }}"
   with_subelements:
-    - users
-    - ssh_key
+     - users
+     - key
   tags: ['users','configuration']

@@ -1,11 +1,3 @@
 ---
 users_default_shell: /bin/bash
 
-users:
-  - username: grassharper
-    name: AB
-    groups: ['wheel']
-    uid: 1001
-    state: present
-    ssh_key:
-      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCsHFGZ7KO/+bk/xm5QSLJlOf0Pl9MzLOAgwSxI8gUmLh7M/vbewLvLKXpddk86gqMEppezQBNhSJy3ElHQX/ZqxlNRroVtWHnp18VdpCW3Gu+dwKfxWA0q8P/ooZteIDkpbAZy9CX4Fk4vgAHCgfvXDIX/Q9ZZ29tI1KUCtkWXaE1CQZGOK/zzFbz89PWQMgQVp6ehjpPBN4PnZvuNlW3alIzJGnTP4pFrIkBBBYuWlj+n2CB3MEVd13fAnFMJOK4omv++wNpXUXWzjLDrG6+hF9fk3+P61ajHdPT/cneJJ3X/yJ5jr/IlJChh6LUX6Incce4G4uL0OQ6v1d4oKctqlGNjbA8NS2Rpcc9QzsGSFMJt6CgExPis7JUmANhPQrcADjReiiUGUgb7vVT9E6T4uP18eknK0Z64BrxDfX2w28XRloU6fNv+VWMI8+GkMOaxKYjSZegpn+Q4G+tyh0pfjbUJbuQqGaUskTt7c7n6/2hQRZhsj8ohEd6rBDW6EFoDPoK9yoth8HTIlSq5+UCkc9JsHJDxa6O7g/KCkpGua2jSkeCmC53x66O3oW93i0H8oa9uloMAu5h9ZDejQAwxytVmlATU+93YaebK814VQMqKZ+V+TADsdL3U7EwRvsywGZaeP8rrFEKO7FFvO4aDw7wOQ3hoace7c+NkCgEfww== grassharper@AB.local-2015-07-21"

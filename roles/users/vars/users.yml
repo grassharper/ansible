@@ -1,0 +1,11 @@
+---
+users:
+  - name: grassharper
+    description: AB
+    groups: ['wheel']
+    uid: 1001
+    state: present
+    key:
+      - name: grassharper.pub
+        state: absent
+
