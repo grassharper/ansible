@@ -1,0 +1,85 @@
+---
+- name: Gather OS Specific Variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - "../vars/{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+    - "../vars/{{ ansible_distribution }}.yml"
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../vars/defaults.yml"
+
+- name: Install memcached on Debian and related
+  apt: pkg={{ item }} state=installed update-cache=yes
+  with_items:
+    - memcached
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+  register: memcached_install
+  notify:
+    - memcached-restart
+  tags:
+    - packages
+
+- name: Install memcached on RHEL derivatives
+  yum: name={{ item }} state=present
+  with_items:
+    - memcached
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora'
+
+  register: memcached_install
+  tags:
+    - packages
+
+- name: enable memcached on RHEL derivatives
+  service: name={{ memcached_service }} enabled=yes
+  when: (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora') and memcached_install
+
+  notify:
+    - memcached-restart
+
+- name: Install memcached on FreeBSD
+  pkgng: name={{ item }} state=present
+  with_items:
+    - memcached
+  when: ansible_distribution == 'FreeBSD'
+
+  register: memcached_install
+  tags:
+    - packages
+
+- name: is memcahed enable on FreeBSD
+  shell: 'sysrc memcached_enable | cut -d " " -f 2'
+  when: (ansible_distribution == 'FreeBSD') and memcached_install
+
+  register: isEnabled
+
+- name: Configure memcached on FreeBSD
+  command: "{{ item }}"
+  with_items:
+  - sysrc memcached_user="nobody"
+  - sysrc memcached_flags="-d -p {{ memcached_port }} -c {{ memcached_connections }} -m {{ memcached_memory_limit }}"
+  when: (ansible_distribution == 'FreeBSD')
+
+  tags:
+    - configuration
+
+  notify:
+    - memcached-restart
+
+- name: Bind memcached to localhost on FreeBSD
+  command: 'sysrc memcached_flags="-d -p {{ memcached_port }} -c {{ memcached_connections }} -m {{ memcached_memory_limit }} -l {{ memcached_listen_ip }}"'
+  when: memcached_bind_localhost_only
+
+  tags:
+    - configuration
+
+  notify:
+    - memcached-restart
+
+- name: Enable memcached on FreeBSD
+  command: 'sysrc memcached_enable=YES'
+  when: (ansible_distribution == 'FreeBSD') and (isEnabled.stdout == "NO" or isEnabled.stdout == "unknown")
+
+  notify:
+    - memcached-restart
+

@@ -1,0 +1,6 @@
+---
+memcached_port: 11211
+memcached_bind_localhost_only: 0
+memcached_listen_ip: 127.0.0.1
+memcached_memory_limit: 512
+memcached_connections: 2048

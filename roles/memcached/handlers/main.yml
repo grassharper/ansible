@@ -1,0 +1,8 @@
+- name: memcached-start
+  service: name={{ memcached_service }} start=started
+
+- name: memcached-restart
+  service: name={{ memcached_service }} state=restarted
+
+- name: memcached-stop
+  service: name={{ memcached_service }} state=stopped

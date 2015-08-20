@@ -1,0 +1,9 @@
+-d
+-p {{ memcached_port }}
+-u {{ memcached_user }}
+-c {{ memcached_connections }}
+-m {{ memcached_memory_limit }}
+{% if memcached_bind_localhost_only %}
+-l {{ memcached_listen_ip }}
+{% endif %}
+

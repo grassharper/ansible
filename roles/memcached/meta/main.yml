@@ -1,0 +1,25 @@
+---
+galaxy_info:
+  author: AB
+  description: Ansible role to manage Memcached
+  license: WTFPL-2.0
+  min_ansible_version: 1.9
+  platforms:
+  - name: GenericUNIX
+    versions:
+    - all
+    - any
+  - name: GenericLinux
+    versions:
+    - all
+    - any
+  - name: FreeBSD
+    versions:
+    - all
+  - name: OpenBSD
+    versions:
+    - all
+  categories:
+  - web
+  - databases
+dependencies: []

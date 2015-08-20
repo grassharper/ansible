@@ -1,0 +1,9 @@
+PORT="{{ memcached_port }}"
+USER="{{ memcached_user }}"
+MAXCONN="{{ memcached_connections }}"
+CACHESIZE="{{ memcached_memory_limit }}"
+{% if memcached_bind_localhost_only %}
+OPTIONS="-l {{ memcached_listen_ip }}"
+{% else %}
+OPTIONS=""
+{% endif %}
