@@ -1,0 +1,280 @@
+- name: disable Ctrl-Alt-Del
+  systemd:
+    name: ctrl-alt-del.target
+    masked: yes
+    daemon_reload: yes
+  register: masked_ctrl_alt_del
+  tags:
+    - configuration
+    - security
+
+- name: force systemd to reread configs
+  command: systemctl daemon-reload
+  when: masked_ctrl_alt_del|changed
+  tags:
+    - configuration
+    - security
+
+- name: "PRELIM | users who have a home directory under /home"
+  shell: "/bin/grep '/home' /etc/passwd | /bin/cut -d: -f1"
+  changed_when: false
+  register: users
+  tags:
+    - configuration
+    - security
+
+- name: "no hosts.equiv on the system"
+  file:
+    state: absent
+    dest: /etc/hosts.equiv
+  tags:
+    - configuration
+    - security
+
+- name: "no .rhosts files"
+  file:
+    state: absent
+    dest: ~{{ item }}/.rhosts
+  with_items: 
+    - "{{ users.stdout_lines }}"
+    - root
+  tags:
+    - configuration
+    - security
+
+- name: disable core dumps for all users
+  pam_limits:
+    domain: '*'
+    limit_type: hard
+    limit_item: core
+    value: 0
+  tags:
+    - configuration
+    - security
+
+- name: Set some kernel parameters
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items:
+    # ensure core dumps can never be made by setuid programs
+    - { name: 'fs.suid_dumpable', value: 0 }
+    # enable address space layout randomization (ASLR) and add data segments as well
+    - { name: 'kernel.randomize_va_space', value: 2 }
+    # disable IP source routing
+    - { name: 'net.ipv4.conf.all.accept_source_route', value: 0 }
+    # ignoring broadcasts request
+    - { name: 'net.ipv4.icmp_echo_ignore_broadcasts', value: 1 }
+    # ignore ICMP messages that do not conform to standards
+    - { name: 'net.ipv4.icmp_ignore_bogus_error_responses', value: 1 }
+    # enable IP spoofing protection
+    - { name: 'net.ipv4.conf.all.rp_filter', value: 1 }
+    # spoofed packers aka network packets with addresses that should not be possible are logged
+    - { name: 'net.ipv4.conf.default.log_martians', value: 1 }
+    - { name: 'net.ipv4.conf.all.log_martians', value: 1 }
+    # enable TCP SYN cookies
+    - { name: 'net.ipv4.tcp_syncookies', value: 1 }
+    # enable source spoofing protection
+    - { name: 'net.ipv4.conf.all.rp_filter', value: 1 }
+    # disable TCP time stamping
+    - { name: 'net.ipv4.tcp_timestamps', value: 0 }
+    # disable redirects for gateways listed in our default
+    # gateway list (enabled by default)
+    - { name: 'net.ipv4.conf.default.secure_redirects', value: 0 }
+    - { name: 'net.ipv4.conf.all.secure_redirects', value: 0 }
+    # disable IPv4 IP forwarding
+    - { name: 'net.ipv4.ip_forward', value: 0 }
+    # don't send ICMP redirect (we are not a router)
+    - { name: 'net.ipv4.conf.all.send_redirects', value: 0 }
+    - { name: 'net.ipv4.conf.default.send_redirects', value: 0 }
+    # disable IPv4 redirects acceptance (prevent MITM attacks)
+    - { name: 'net.ipv4.conf.default.accept_redirects', value: 0 }
+    - { name: 'net.ipv4.conf.all.accept_redirects', value: 0 }
+    # disable IPv6 redirect acceptance (prevent MITM attacks)
+    - { name: 'net.ipv6.conf.default.accept_redirects', value: 0 }
+    - { name: 'net.ipv6.conf.all.accept_redirects', value: 0 }
+    # disable IPv6 router advertisment
+    - { name: 'net.ipv6.conf.default.accept_ra', value: 0 }
+    # disable IPv6
+    - { name: 'net.ipv6.conf.all.disable_ipv6', value: 1 }
+  tags:
+    - configuration
+    - security
+
+- name: The system default umask for daemons must be 027 or 022.
+  lineinfile:
+    dest: /etc/init.d/functions
+    regexp: "^umask "
+    line: "umask 022"
+  tags:
+    - configuration
+    - security
+
+- name: remove Avahi mdns daemon (services)
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  register: stop_disabled_services
+  failed_when: "stop_disabled_services | failed and 'Could not find the requested service' not in stop_disabled_services.msg"
+  with_items:
+    - avahi-daemon.socket
+    - avahi-daemon.service
+  tags:
+    - configuration
+    - security
+
+- name: remove Avahi mdns daemon (packages)
+  yum: name={{ item }} state=absent
+  with_items:
+    - avahi-autoipd
+    - avahi-libs
+    - avahi
+  tags:
+    - packages
+    - security
+
+- name: remove the 'X Window System' package group
+  yum:
+    name: "@X Window System"
+    state: absent
+  tags:
+    - packages
+    - security
+
+- name: "Ensure some packages are uninstalled on RHEL and/or derivatives"
+  yum: name={{ item }} state=absent
+  with_items:
+    - tftp
+    - telnet
+    - rsh
+    - talk
+  tags:
+    - packages
+    - security
+
+- name: disable system null passwords
+  replace:
+    path: /etc/pam.d/system-auth
+    regexp: '(\s)nullok'
+    backup: yes
+  tags:
+    - configuration
+    - security
+
+- debug:
+    msg: "disable uncommon filesystems."
+
+- name: disable CRAMFS
+  copy: src=rhel.cramfs.conf dest=/etc/modprobe.d/cramfs.conf owner=root group=root mode=644 backup=no
+  tags:
+    - configuration
+    - security
+
+- name: disable SQUASHFS
+  copy: src=rhel.squashfs.conf dest=/etc/modprobe.d/squashfs.conf owner=root group=root mode=644 backup=no
+  tags:
+    - configuration
+    - security
+
+- name: disable UDF
+  copy: src=rhel.udf.conf dest=/etc/modprobe.d/udf.conf owner=root group=root mode=644 backup=no
+  tags:
+    - configuration
+    - security
+
+- debug:
+    msg: "disable uncommon network protocols."
+
+- name: disable Datagram Congestion Control Protocol (DCCP)
+  copy: src=rhel.dccp.conf dest=/etc/modprobe.d/dccp.conf owner=root group=root mode=644 backup=no
+  tags:
+    - configuration
+    - security
+
+- name: disable Stream Control Transmission Protocol (SCTP)
+  copy: src=rhel.sctp.conf dest=/etc/modprobe.d/sctp.conf owner=root group=root mode=644 backup=no
+  tags:
+    - configuration
+    - security
+
+- name: disable Reliable Datagram Sockets (RDS)
+  copy: src=rhel.rds.conf dest=/etc/modprobe.d/rds.conf owner=root group=root mode=644 backup=no
+  tags:
+    - configuration
+    - security
+
+- name: disable Transparent Inter-Process Communication (TIPC)
+  copy: src=rhel.tipc.conf dest=/etc/modprobe.d/tipc.conf owner=root group=root mode=644 backup=no
+  tags:
+    - configuration
+    - security
+
+- debug:
+    msg: "modify fstab options to secure data partitions."
+
+- name: set nodev for /tmp
+  mount: 
+    path: "{{ item.mount }}"
+    src: "{{ item.device }}"
+    fstype: "{{ item.fstype }}"
+    opts: "rw,noexec,nosuid,nodev"
+    state: mounted
+  when: item.mount == "/tmp"
+  with_items: "{{ ansible_mounts }}"
+  tags:
+    - configuration
+    - security
+
+- name: set nodev for /home
+  mount: 
+    path: "{{ item.mount }}"
+    src: "{{ item.device }}"
+    fstype: "{{ item.fstype }}"
+    opts: "defaults,nodev"
+    state: mounted
+  when: item.mount == "/home"
+  with_items: "{{ ansible_mounts }}"
+  tags:
+    - configuration
+    - security
+
+- name: increase server security with mount options
+  mount:
+    path: "{{ item.path }}"
+    src: "{{ item.src }}"
+    fstype: "{{ item.fstype }}"
+    opts: "{{ item.options }}"
+    state: "{{ item.state }}"
+  with_items:
+    # bind /var/tmp to /tmp
+    - { path: '/var/tmp', src: '/tmp', fstype: 'none', options: 'rw,noexec,nosuid,nodev,bind', state: 'present' }
+    # ensure nodev, nosuid, and noexec options to /dev/shm
+    - { path: '/dev/shm', src: 'tmpfs', fstype: 'tmpfs', options: 'rw,nosuid,nodev,noexec', state: 'mounted' }
+  tags:
+    - configuration
+    - security
+
+- name: bash history and console timeout config
+  blockinfile:
+    path: /etc/profile.d/sec.sh
+    owner: root
+    group: root
+    mode: 644
+    block: |
+      # several security releated initializations
+
+      shopt -s histappend
+      shopt -s checkwinsize
+
+      TMOUT=300
+      readonly TMOUT
+      export TMOUT
+
+      export HISTCONTROL=ignoredps:ignorespace
+      export HISTTIMEFORMAT='%Y-%m-%d %H:%M:%S  '
+      export HISTSIZE=1000
+      export HISTFILESIZE=10000
+
+      export EDITOR=vim
