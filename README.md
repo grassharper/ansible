@@ -1,7 +1,7 @@
 # ansible
 Ansible Playbooks
 
-[![Platforms](http://img.shields.io/badge/Platforms-FreeBSD Centos Ubuntu-green.svg?style=flat)](#)
+[![Bintray](https://img.shields.io/badge/OS-FreBSD-green.svg)](#) [![Bintray](https://img.shields.io/badge/OS-CentOS-green.svg)](#)
 
 ## Example Playbook
 ```
