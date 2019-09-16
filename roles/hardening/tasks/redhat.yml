@@ -214,6 +214,19 @@
 - debug:
     msg: "modify fstab options to secure data partitions."
 
+- name: set hidepid=2 for /proc
+  mount:
+    path: "/proc"
+    src: "proc"
+    fstype: "proc"
+    opts: "rw,nosuid,nodev,noexec,relatime,hidepid=2"
+    dump: 0
+    passno: 0
+    state: mounted
+  tags:
+    - configuration
+    - security
+
 - name: set nodev for /tmp
   mount: 
     path: "{{ item.mount }}"
