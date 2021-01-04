@@ -602,6 +602,7 @@
     owner: root
     group: root
     mode: 644
+    create: yes
     block: |
       # several security releated initializations
 
@@ -618,3 +619,6 @@
       export HISTFILESIZE=10000
 
       export EDITOR=vim
+  tags:
+    - configuration
+    - security
