@@ -233,7 +233,7 @@
     path: "/proc"
     src: "proc"
     fstype: "proc"
-    opts: "rw,nosuid,nodev,noexec,relatime,hidepid=2"
+    opts: "rw,nosuid,nodev,noexec,relatime,hidepid=2,gid=nohidproc"
     dump: 0
     passno: 0
     state: mounted
