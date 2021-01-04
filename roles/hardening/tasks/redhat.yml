@@ -116,6 +116,7 @@
     - { name: 'net.ipv6.conf.default.accept_redirects', value: 0 }
     - { name: 'net.ipv6.conf.all.accept_redirects', value: 0 }
     # disable IPv6 router advertisment
+    - { name: 'net.ipv6.conf.all.accept_ra', value: 0 }
     - { name: 'net.ipv6.conf.default.accept_ra', value: 0 }
     # disable IPv6
     - { name: 'net.ipv6.conf.all.disable_ipv6', value: 1 }
