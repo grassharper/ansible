@@ -276,25 +276,219 @@
     msg: "disable uncommon network protocols."
 
 - name: disable Datagram Congestion Control Protocol (DCCP)
-  copy: src=rhel.dccp.conf dest=/etc/modprobe.d/dccp.conf owner=root group=root mode=644 backup=no
+  copy:
+    src: "rhel.dccp.conf"
+    dest: "/etc/modprobe.d/dccp.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
   tags:
     - configuration
     - security
 
 - name: disable Stream Control Transmission Protocol (SCTP)
-  copy: src=rhel.sctp.conf dest=/etc/modprobe.d/sctp.conf owner=root group=root mode=644 backup=no
+  copy:
+    src: "rhel.sctp.conf"
+    dest: "/etc/modprobe.d/sctp.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
   tags:
     - configuration
     - security
 
 - name: disable Reliable Datagram Sockets (RDS)
-  copy: src=rhel.rds.conf dest=/etc/modprobe.d/rds.conf owner=root group=root mode=644 backup=no
+  copy:
+    src: "rhel.rds.conf"
+    dest: "/etc/modprobe.d/rds.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
   tags:
     - configuration
     - security
 
 - name: disable Transparent Inter-Process Communication (TIPC)
-  copy: src=rhel.tipc.conf dest=/etc/modprobe.d/tipc.conf owner=root group=root mode=644 backup=no
+  copy:
+    src: "rhel.tipc.conf"
+    dest: "/etc/modprobe.d/tipc.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable Automated Teller Machine (ATM)
+  copy:
+    src: "rhel.atm.conf"
+    dest: "/etc/modprobe.d/atm.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable High-Level Data Link Control (HDLC)
+  copy:
+    src: "rhel.n-hdlc.conf"
+    dest: "/etc/modprobe.d/n-hdlc.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable Amateur X.25 (AX25)
+  copy:
+    src: "rhel.ax25.conf"
+    dest: "/etc/modprobe.d/ax25.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable NET/ROM amateur packet radio protocol family (NET/ROM)
+  copy:
+    src: "rhel.netrom.conf"
+    dest: "/etc/modprobe.d/netrom.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable ITU-T X.25 / ISO-8208 protocol (X25)
+  copy:
+    src: "rhel.x25.conf"
+    dest: "/etc/modprobe.d/x25.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable Rose amateur packet radio protocol family (Rose)
+  copy:
+    src: "rhel.rose.conf"
+    dest: "/etc/modprobe.d/rose.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable DECnet protocol suite (DECnet)
+  copy:
+    src: "rhel.decnet.conf"
+    dest: "/etc/modprobe.d/decnet.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+
+- name: disable IEEE 802.15.4a (af_802154)
+  copy:
+    src: "rhel.af_802154.conf"
+    dest: "/etc/modprobe.d/af_802154.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable Internetwork Packet Exchange (IPX)
+  copy:
+    src: "rhel.ipx.conf"
+    dest: "/etc/modprobe.d/ipx.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable AppleTalk (AppleTalk)
+  copy:
+    src: "rhel.appletalk.conf"
+    dest: "/etc/modprobe.d/appletalk.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable Subnetwork Access Protocol (PSNAP)
+  copy:
+    src: "rhel.psnap.conf"
+    dest: "/etc/modprobe.d/psnap.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+
+- name: disable Novell raw IEEE 802.3 (p8023)
+  copy:
+    src: "rhel.p8023.conf"
+    dest: "/etc/modprobe.d/p8023.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable IEEE 802.2 (p8022)
+  copy:
+    src: "rhel.p8022.conf"
+    dest: "/etc/modprobe.d/p8022.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable Controller Area Network (CAN)
+  copy:
+    src: "rhel.can.conf"
+    dest: "/etc/modprobe.d/can.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
   tags:
     - configuration
     - security
