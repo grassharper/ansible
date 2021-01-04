@@ -188,20 +188,86 @@
 - debug:
     msg: "disable uncommon filesystems."
 
-- name: disable CRAMFS
-  copy: src=rhel.cramfs.conf dest=/etc/modprobe.d/cramfs.conf owner=root group=root mode=644 backup=no
+- name: disable Compressed ROM/RAM File System (CRAMFS)
+  copy:
+    src: "rhel.cramfs.conf"
+    dest: "/etc/modprobe.d/cramfs.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
   tags:
     - configuration
     - security
 
-- name: disable SQUASHFS
-  copy: src=rhel.squashfs.conf dest=/etc/modprobe.d/squashfs.conf owner=root group=root mode=644 backup=no
+- name: disable Squash File System (SQUASHFS)
+  copy:
+    src: "rhel.squashfs.conf"
+    dest: "/etc/modprobe.d/squashfs.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
   tags:
     - configuration
     - security
 
-- name: disable UDF
-  copy: src=rhel.udf.conf dest=/etc/modprobe.d/udf.conf owner=root group=root mode=644 backup=no
+- name: disable Universal Disk Format (UDF)
+  copy:
+    src: "rhel.udf.conf"
+    dest: "/etc/modprobe.d/udf.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable VERITAS VxFS(TM) file system format (FreeVxFS)
+  copy:
+    src: "rhel.freevxfs.conf"
+    dest: "/etc/modprobe.d/freevxfs.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable Journalling Flash File System version 2 (JFFS2)
+  copy:
+    src: "rhel.jffs2.conf"
+    dest: "/etc/modprobe.d/jffs2.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable Hierarchical File System (HFS)
+  copy:
+    src: "rhel.hfs.conf"
+    dest: "/etc/modprobe.d/hfs.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
+  tags:
+    - configuration
+    - security
+
+- name: disable HFS Extended (HFS+)
+  copy:
+    src: "rhel.hfsplus.conf"
+    dest: "/etc/modprobe.d/hfsplus.conf"
+    owner: "root"
+    group: "root"
+    mode: 644
+    backup: no
   tags:
     - configuration
     - security
