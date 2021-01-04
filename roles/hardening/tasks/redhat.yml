@@ -92,6 +92,10 @@
     - { name: 'net.ipv4.tcp_syncookies', value: 1 }
     # protect against time-wait assassination by dropping RST packets for sockets in the time-wait state
     - { name: 'net.ipv4.tcp_rfc1337', value: 1 }
+    # disable TCP SACK
+    - { name: 'net.ipv4.tcp_sack', value: 0 }
+    - { name: 'net.ipv4.tcp_dsack', value: 0 }
+    - { name: 'net.ipv4.tcp_fack', value: 0 }
     # enable source spoofing protection
     - { name: 'net.ipv4.conf.all.rp_filter', value: 1 }
     # disable TCP time stamping
