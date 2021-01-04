@@ -496,6 +496,18 @@
 - debug:
     msg: "modify fstab options to secure data partitions."
 
+- name: Ensure group "nohidproc" exists
+  group:
+    name: nohidproc
+    gid: 23
+    state: present
+
+- name: adding existing user polkitd to group nohidproc
+  user:
+    name: polkitd
+    groups: nohidproc
+    append: yes
+
 - name: set hidepid=2 for /proc
   mount:
     path: "/proc"
