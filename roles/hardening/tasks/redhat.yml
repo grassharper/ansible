@@ -572,6 +572,30 @@
     - configuration
     - security
 
+- name: ensure sudo log file exists
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^Defaults logfile.*'
+    insertafter: '^# Defaults specification'
+    line: 'Defaults logfile="/var/log/sudo.log"'
+    validate: 'visudo -cf %s'
+  tags:
+    - configuration
+    - security
+
+- name: ensure sudo commands use pty
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^Defaults use_pty'
+    insertafter: '^# Defaults specification'
+    line: 'Defaults use_pty'
+    validate: 'visudo -cf %s'
+  tags:
+    - configuration
+    - security
+
 - name: bash history and console timeout config
   blockinfile:
     path: /etc/profile.d/sec.sh
