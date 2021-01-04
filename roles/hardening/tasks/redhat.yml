@@ -10,7 +10,7 @@
 
 - name: force systemd to reread configs
   command: systemctl daemon-reload
-  when: masked_ctrl_alt_del|changed
+  when: masked_ctrl_alt_del.changed
   tags:
     - configuration
     - security
@@ -78,6 +78,7 @@
     - { name: 'kernel.randomize_va_space', value: 2 }
     # disable IP source routing
     - { name: 'net.ipv4.conf.all.accept_source_route', value: 0 }
+    - { name: 'net.ipv4.conf.default.accept_source_route', value: 0 }
     # ignoring broadcasts request
     - { name: 'net.ipv4.icmp_echo_ignore_broadcasts', value: 1 }
     # ignore ICMP messages that do not conform to standards
@@ -89,6 +90,8 @@
     - { name: 'net.ipv4.conf.all.log_martians', value: 1 }
     # enable TCP SYN cookies
     - { name: 'net.ipv4.tcp_syncookies', value: 1 }
+    # protect against time-wait assassination by dropping RST packets for sockets in the time-wait state
+    - { name: 'net.ipv4.tcp_rfc1337', value: 1 }
     # enable source spoofing protection
     - { name: 'net.ipv4.conf.all.rp_filter', value: 1 }
     # disable TCP time stamping
@@ -131,7 +134,7 @@
     state: stopped
     enabled: no
   register: stop_disabled_services
-  failed_when: "stop_disabled_services | failed and 'Could not find the requested service' not in stop_disabled_services.msg"
+  failed_when: "stop_disabled_services.failed and 'Could not find the requested service' not in stop_disabled_services.msg"
   with_items:
     - avahi-daemon.socket
     - avahi-daemon.service
