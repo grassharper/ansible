@@ -58,6 +58,20 @@
     value: "{{ item.value }}"
     state: present
   with_items:
+    # restrict unprivileged access to kernel syslog
+    - { name: 'kernel.dmesg_restrict', value: 1 }
+    # hide the kernel symbols in /proc/kallsyms
+    - { name: 'kernel.kptr_restrict', value: 2 }
+    # alter behavior when printing or logging error messages
+    - { name: 'kernel.printk', value: "3 4 1 7" }
+    # harden the JIT compiler against certain attacks such as heap spraying attacks
+    - { name: 'net.core.bpf_jit_harden', value: 2 }
+    # restrict the use of the ptrace() syscall to root only
+    - { name: 'kernel.yama.ptrace_scope', value: 2 }
+    #  disables kexec as it can be used to livepatch the running kernel
+    - { name: 'kernel.kexec_load_disabled', value: 1 }
+    # disable SysRq key, which can be used to run arbitrary commands that would normally require root
+    - { name: 'kernel.sysrq', value: 0 }
     # ensure core dumps can never be made by setuid programs
     - { name: 'fs.suid_dumpable', value: 0 }
     # enable address space layout randomization (ASLR) and add data segments as well
