@@ -563,6 +563,15 @@
     - configuration
     - security
 
+- name: disable USB mass storage
+  lineinfile:
+    dest: /etc/modprobe.d/usb-storage.conf
+    line: install usb-storage /bin/true
+    create: yes
+  tags:
+    - configuration
+    - security
+
 - name: bash history and console timeout config
   blockinfile:
     path: /etc/profile.d/sec.sh
